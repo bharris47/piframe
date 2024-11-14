@@ -1,5 +1,4 @@
 import json
-import random
 from collections import deque
 from datetime import datetime
 
