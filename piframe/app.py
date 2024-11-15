@@ -1,16 +1,25 @@
 import json
+from argparse import ArgumentParser
 from collections import deque
 from datetime import datetime
+from pathlib import Path
 
 import boto3
+from waveshare_epd.epdconfig import output
 
 from piframe import models, display, image_utils
 from piframe.models import Message, MessageContent
 from piframe.prompts import image_description_prompt, image_generation_prompt
 from piframe.weather import get_current_weather
 
-
 def update_frame():
+    parser = ArgumentParser()
+    parser.add_argument("--output-directory", "-o")
+    args = parser.parse_args()
+
+    generate_and_render_image(output_directory=args.output_directory)
+
+def generate_and_render_image(output_directory: str):
     bedrock = boto3.client(
         "bedrock-runtime",
     )
@@ -62,9 +71,14 @@ def update_frame():
     display_image = image_utils.scale_and_crop(image, 800, 480)
     display.render(display_image)
 
-    image.save(f"images/{datetime.now().isoformat()}.jpg", quality=99)
-    with open("prompt_history.json", "a") as f:
-        f.write(json.dumps({"timestamp": datetime.now().isoformat(), "description": image_description}) + "\n")
+    timestamp = datetime.now().isoformat()
+    images_dir = Path(output_directory) / "images"
+    images_dir.mkdir(exist_ok=True)
+    image_path = images_dir / f"{timestamp}.jpg"
+    image.save(image_path, quality=99)
+    history_path = Path(output_directory) / "prompt_history.json"
+    with open(history_path, "a") as f:
+        f.write(json.dumps({"timestamp": timestamp, "description": image_description}) + "\n")
 
 
 if __name__ == '__main__':
