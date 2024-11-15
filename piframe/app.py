@@ -10,7 +10,7 @@ from piframe.prompts import image_description_prompt, image_generation_prompt
 from piframe.weather import get_current_weather
 
 
-def main():
+def update_frame():
     bedrock = boto3.client(
         "bedrock-runtime",
     )
@@ -68,4 +68,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    update_frame()
