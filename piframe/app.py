@@ -4,7 +4,7 @@ from datetime import datetime
 
 import boto3
 
-from piframe import models
+from piframe import models, display, image_utils
 from piframe.models import Message, MessageContent
 from piframe.prompts import image_description_prompt, image_generation_prompt
 from piframe.weather import get_current_weather
@@ -58,8 +58,11 @@ def main():
     image_prompt = image_generation_prompt(image_description=image_description)
     print(image_prompt)
     image = image_model.invoke([Message(content=[MessageContent(text=image_prompt)])])
-    image.save(f"images/{datetime.now().isoformat()}.jpg", quality=99)
 
+    display_image = image_utils.scale_and_crop(image, 800, 480)
+    display.render(display_image)
+
+    image.save(f"images/{datetime.now().isoformat()}.jpg", quality=99)
     with open("prompt_history.json", "a") as f:
         f.write(json.dumps({"timestamp": datetime.now().isoformat(), "description": image_description}) + "\n")
 
