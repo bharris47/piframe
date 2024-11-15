@@ -1,3 +1,4 @@
+import csv
 import json
 from argparse import ArgumentParser
 from collections import deque
@@ -84,9 +85,21 @@ def generate_and_render_image(output_directory: str):
     images_dir.mkdir(exist_ok=True)
     image_path = images_dir / f"{timestamp}.jpg"
     image.save(image_path, quality=99)
-    history_path = Path(output_directory) / "prompt_history.json"
-    with open(history_path, "a") as f:
-        f.write(json.dumps({"timestamp": timestamp, "description": image_description}) + "\n")
+
+    event = {
+        "timestamp": timestamp,
+        "description_model_id": description_model.model_id,
+        "description": image_description,
+        "image_model_id": image_model.model_id,
+        "image_prompt": image_prompt,
+    }
+    log_path = Path(output_directory) / "piframe.log.csv"
+    write_header = not log_path.exists()
+    with open(log_path, "a") as f:
+        writer = csv.DictWriter(f, fieldnames=event.keys())
+        if write_header:
+            writer.writeheader()
+        writer.writerow(event)
 
 
 if __name__ == '__main__':

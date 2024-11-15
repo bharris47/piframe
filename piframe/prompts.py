@@ -62,12 +62,12 @@ STYLES = [
     "Low-Fi",
 ]
 
-IMAGE_DESCRIPTION_PROMPT ="""You generate image descriptions for a text-to-image generator.
+IMAGE_DESCRIPTION_PROMPT ="""You generate ridiculous image descriptions for a text-to-image generator.
 
 Requirements
 - Limit the description to 15 words.
 - Be extremely detailed about the setting and subject.
-- Descriptions must be hilarious.
+- Descriptions must be non-sensical and hilarious.
 - The day of the week cannot be directly represented visually, but abstract is fine.
 - Exclude quotes, exclamations, or other sayings as they will not be reflected in the image.
 - Nudity is strictly forbidden.
@@ -130,4 +130,4 @@ def image_generation_prompt(image_description: str):
     style = random.choice(STYLES)
     if not image_description.endswith("."):
         image_description += "."
-    return (f"{image_description} High-contrast, flat, solid colors with bold lines, minimal shading, simplified details, {style} style.")
+    return (f"{image_description} High-contrast, sharp bold lines, minimal shading, black, white, red, yellow, green, blue, and orange, {style} style.")

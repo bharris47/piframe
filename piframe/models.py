@@ -23,14 +23,14 @@ T = TypeVar("T")
 class Model(ABC, Generic[T]):
     def __init__(self, client, model_id: str, **kwargs):
         self._client = client
-        self._model_id = model_id
+        self.model_id = model_id
         self._model_args = kwargs
 
     def invoke(self, messages: list[Message]) -> T:
         body = self._get_request_body(messages)
         response = self._client.invoke_model(
             body=json.dumps(body),
-            modelId=self._model_id,
+            modelId=self.model_id,
         )
         response_content = json.loads(response.get("body").read())
         log_content = {k: v for k, v in response_content.items() if k != "images"}
