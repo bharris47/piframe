@@ -28,7 +28,6 @@ class Model(ABC, Generic[T]):
 
     def invoke(self, messages: list[Message]) -> T:
         body = self._get_request_body(messages)
-        body.update(self._model_args)
         response = self._client.invoke_model(
             body=json.dumps(body),
             modelId=self._model_id,
@@ -52,6 +51,7 @@ class Anthropic(Model[str]):
         messages = [asdict(message) for message in messages]
         return {
             "messages": messages,
+            **self._model_args,
         }
 
     def _parse_response(self, response: dict) -> str:
@@ -65,6 +65,7 @@ class Meta(Model[str]):
 <|start_header_id|>assistant<|end_header_id|>"""
         return {
             "prompt": formatted_prompt,
+            **self._model_args,
         }
 
     def _parse_response(self, response: dict) -> str:
@@ -75,6 +76,7 @@ class StableImage(Model[Image.Image]):
         return {
             "prompt": messages[0].content[0].text,
             "mode": "text-to-image",
+            **self._model_args,
         }
 
     def _parse_response(self, response: dict) -> Image.Image:
@@ -90,8 +92,26 @@ class StableXL(Model[Image.Image]):
                     "text": messages[0].content[0].text,
                 }
             ],
+            **self._model_args,
         }
 
     def _parse_response(self, response: dict) -> Image.Image:
         image_bytes = b64decode(response.get("artifacts")[0].get("base64"))
+        return Image.open(BytesIO(image_bytes))
+
+class TitanImage(Model[Image.Image]):
+    def _get_request_body(self, messages: list[Message]) -> dict:
+        return {
+            "taskType": "TEXT_IMAGE",
+            "textToImageParams": {
+                "text": messages[0].content[0].text,
+            },
+            "imageGenerationConfig": {
+                "numberOfImages": 1,
+                **self._model_args.get("imageGenerationConfig", {})
+            }
+        }
+
+    def _parse_response(self, response: dict) -> Image.Image:
+        image_bytes = b64decode(response.get("images")[0].encode())
         return Image.open(BytesIO(image_bytes))

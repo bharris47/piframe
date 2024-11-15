@@ -5,7 +5,6 @@ from datetime import datetime
 from pathlib import Path
 
 import boto3
-from waveshare_epd.epdconfig import output
 
 from piframe import models, display, image_utils
 from piframe.models import Message, MessageContent
@@ -14,7 +13,7 @@ from piframe.weather import get_current_weather
 
 def update_frame():
     parser = ArgumentParser()
-    parser.add_argument("--output-directory", "-o")
+    parser.add_argument("--output-directory", "-o", default=".")
     args = parser.parse_args()
 
     generate_and_render_image(output_directory=args.output_directory)
@@ -37,13 +36,22 @@ def generate_and_render_image(output_directory: str):
     #     max_tokens=100,
     #     temperature=1.0,
     # )
-    image_model = models.StableImage(
+    # image_model = models.StableImage(
+    #     client=bedrock,
+    #     # model_id="stability.stable-image-core-v1:0",
+    #     model_id="stability.sd3-large-v1:0",
+    #     # model_id="stability.stable-image-ultra-v1:0",
+    #     aspect_ratio="16:9",
+    #     output_format="jpg",
+    # )
+    image_model = models.TitanImage(
         client=bedrock,
-        # model_id="stability.stable-image-core-v1:0",
-        model_id="stability.sd3-large-v1:0",
-        # model_id="stability.stable-image-ultra-v1:0",
-        aspect_ratio="16:9",
-        output_format="jpg",
+        model_id="amazon.titan-image-generator-v2:0",
+        imageGenerationConfig={
+            "quality": "premium",
+            "width": 1280,
+            "height": 768,
+        }
     )
 
     prompt_history = deque(maxlen=10)
