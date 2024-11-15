@@ -30,8 +30,8 @@ def update_frame():
     # )
     image_model = models.StableImage(
         client=bedrock,
-        model_id="stability.stable-image-core-v1:0",
-        # model_id="stability.sd3-large-v1:0",
+        # model_id="stability.stable-image-core-v1:0",
+        model_id="stability.sd3-large-v1:0",
         # model_id="stability.stable-image-ultra-v1:0",
         aspect_ratio="16:9",
         output_format="jpg",
