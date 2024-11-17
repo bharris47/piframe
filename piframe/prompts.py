@@ -74,10 +74,9 @@ Requirements
 - Do not mention real people.
 
 Use the following context to tailor your descriptions
-- prefer holiday themes on known holidays
-- incorporate weather conditions where it makes sense
 - morning/afternoon/evening/night scenes based on the time
-- wakeful, or sleepy themes depending on my wake up and bed times
+- incorporate current weather conditions
+- holiday themes on known holidays
 
 {context}
 
@@ -113,11 +112,9 @@ def image_description_prompt(battery: float, history: Iterable[str], weather: We
     contexts = [
         f"- Date: {date_str}",
         f"- Time: {time_str}",
-        f"- Wake Up Time: 09:00 AM",
-        f"- Bed Time: 11:00 PM",
     ]
     if weather:
-        contexts.append(f"- Weather: {weather.temperature:.0f} °F {weather.description}")
+        contexts.append(f"- Current Weather: {weather.temperature:.0f} °F {weather.description}")
     context_str = "\n".join(contexts)
 
     return IMAGE_DESCRIPTION_PROMPT.format(

@@ -6,8 +6,9 @@ from datetime import datetime
 from pathlib import Path
 
 import boto3
+from PIL import Image
 
-from piframe import models, display, image_utils
+from piframe import models, image_utils, display
 from piframe.models import Message, MessageContent
 from piframe.prompts import image_description_prompt, image_generation_prompt
 from piframe.weather import get_current_weather
@@ -78,6 +79,7 @@ def generate_and_render_image(output_directory: str):
     image = image_model.invoke([Message(content=[MessageContent(text=image_prompt)])])
 
     display_image = image_utils.scale_and_crop(image, 800, 480)
+    display_image = image_utils.overlay_prompt(display_image, image_description)
     display.render(display_image)
 
     timestamp = datetime.now().isoformat()
