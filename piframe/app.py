@@ -49,18 +49,19 @@ def generate_and_render_image(output_directory: str):
     #     output_format="jpg",
     #     negative_prompt="hazy, cloudy, foggy, diffuse, blur",
     # )
-    # image_model = models.StableDiffusion3x(
-    #     model_id="sd3.5-large",
+    image_model = models.StableDiffusion3x(
+        model_id="sd3-large-turbo",
+        api_key=os.environ["STABILITY_API_KEY"],
+        aspect_ratio="16:9",
+        cfg_scale=None,
+        # negative_prompt="hazy, cloudy, foggy, diffuse, blur",
+    )
+    # image_model = models.StableImageUltra(
+    #     model_id="stable-image-ultra-api",
     #     api_key=os.environ["STABILITY_API_KEY"],
     #     aspect_ratio="16:9",
     #     negative_prompt="hazy, cloudy, foggy, diffuse, blur",
     # )
-    image_model = models.StableImageUltra(
-        model_id="stable-image-ultra-api",
-        api_key=os.environ["STABILITY_API_KEY"],
-        aspect_ratio="16:9",
-        negative_prompt="hazy, cloudy, foggy, diffuse, blur",
-    )
     # image_model = models.TitanImage(
     #     client=bedrock,
     #     model_id="amazon.titan-image-generator-v2:0",

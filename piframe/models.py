@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod, abstractproperty
 from base64 import b64decode
 from dataclasses import dataclass, asdict
 from io import BytesIO
-from typing import Literal, TypeVar, Generic
+from typing import Literal, TypeVar, Generic, Optional
 
 import requests
 from PIL import Image
@@ -130,8 +130,8 @@ class StableApi(Model[Image.Image]):
             self,
             api_key: str,
             aspect_ratio: str,
-            cfg_scale: int = 8,
-            negative_prompt: str = None,
+            cfg_scale: Optional[int] = 8,
+            negative_prompt: Optional[str] = None,
             output_format: str = "jpeg",
             *args,
             **kwargs
@@ -157,7 +157,8 @@ class StableApi(Model[Image.Image]):
                 "prompt": messages[0].content[0].text,
                 "aspect_ratio": self._aspect_ratio,
                 "negative_prompt": self._negative_prompt,
-                "output_format": self._output_format
+                "cfg_scale": self._cfg_scale,
+                "output_format": self._output_format,
             },
         )
         response.raise_for_status()
