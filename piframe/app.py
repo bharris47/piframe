@@ -1,5 +1,6 @@
 import csv
 import json
+import os
 from argparse import ArgumentParser
 from collections import deque
 from datetime import datetime
@@ -27,7 +28,8 @@ def generate_and_render_image(output_directory: str):
 
     description_model = models.Meta(
         client=bedrock,
-        model_id="us.meta.llama3-2-90b-instruct-v1:0",
+        # model_id="us.meta.llama3-2-90b-instruct-v1:0",
+        model_id="meta.llama3-1-405b-instruct-v1:0",
         max_gen_len=100,
         temperature=1.0,
     )
@@ -45,16 +47,29 @@ def generate_and_render_image(output_directory: str):
     #     # model_id="stability.stable-image-ultra-v1:0",
     #     aspect_ratio="16:9",
     #     output_format="jpg",
+    #     negative_prompt="hazy, cloudy, foggy, diffuse, blur",
     # )
-    image_model = models.TitanImage(
-        client=bedrock,
-        model_id="amazon.titan-image-generator-v2:0",
-        imageGenerationConfig={
-            "quality": "premium",
-            "width": 1280,
-            "height": 768,
-        }
+    # image_model = models.StableDiffusion3x(
+    #     model_id="sd3.5-large",
+    #     api_key=os.environ["STABILITY_API_KEY"],
+    #     aspect_ratio="16:9",
+    #     negative_prompt="hazy, cloudy, foggy, diffuse, blur",
+    # )
+    image_model = models.StableImageUltra(
+        model_id="stable-image-ultra-api",
+        api_key=os.environ["STABILITY_API_KEY"],
+        aspect_ratio="16:9",
+        negative_prompt="hazy, cloudy, foggy, diffuse, blur",
     )
+    # image_model = models.TitanImage(
+    #     client=bedrock,
+    #     model_id="amazon.titan-image-generator-v2:0",
+    #     imageGenerationConfig={
+    #         "quality": "premium",
+    #         "width": 1280,
+    #         "height": 768,
+    #     }
+    # )
 
     prompt_history = deque(maxlen=10)
     try:

@@ -11,18 +11,14 @@ ADJECTIVES = [
     "Office-worker",
     "Glamorous",
     "Deceptive",
-    "Pre-historic",
-    "Futuristic",
+    "Stylish",
     "Leisurely",
+    "Lounging",
     "Smoking",
     "Binge-drinking",
     "Gambling",
     "Dancing",
     "Partying",
-    "Baby",
-    "Frozen",
-    "Disproportionate",
-    "Anthropomorphic",
     "Cute",
     "Evil",
 ]
@@ -31,35 +27,32 @@ NOUNS = [
     "Animals",
     "Hot Dogs",
     "Robots",
-    "Pirates",
     "Astronauts",
-    "Monsters",
     "Pickles",
     "Condiments",
     "Wizards",
     "Zombies",
-    "Vampires",
     "Dogs",
     "Cats",
     "Garden Gnomes",
     "French Fries",
     "Musical Instruments",
-    "Cigarettes",
     "Lobsters",
-    "Computers",
     "Monsteras",
-    "Planets",
+    "House Plants",
+    "Aliens",
 ]
 
 STYLES = [
     "Pixel Art",
     "Comic Book",
-    "Cel-Shaded",
     "Pop Art",
     "Art Deco",
     "1950s Cartoon",
     "Bauhaus",
     "Low-Fi",
+    "Surrealist",
+    "Ukiyo-e",
 ]
 
 IMAGE_DESCRIPTION_PROMPT ="""You generate ridiculous image descriptions for a text-to-image generator.
@@ -127,4 +120,4 @@ def image_generation_prompt(image_description: str):
     style = random.choice(STYLES)
     if not image_description.endswith("."):
         image_description += "."
-    return (f"{image_description} High-contrast, sharp lines, minimal shading, black, white, red, yellow, green, blue, and orange, {style} style.")
+    return (f"{image_description} High-contrast, sharp lines, minimal shading, black, white, red, yellow, green, blue, and orange, vibrant colors, {style} style.")
