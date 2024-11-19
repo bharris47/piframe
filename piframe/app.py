@@ -3,13 +3,13 @@ import json
 import os
 from argparse import ArgumentParser
 from collections import deque
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import boto3
-from PIL import Image
 
-from piframe import models, image_utils, display
+from piframe import models, image_utils
+from piframe.hardware import display, power
 from piframe.models import Message, MessageContent
 from piframe.prompts import image_description_prompt, image_generation_prompt
 from piframe.weather import get_current_weather
@@ -80,10 +80,23 @@ def generate_and_render_image(output_directory: str):
     except FileNotFoundError:
         pass
 
-    battery = 1.0
+    battery_status = power.get_power_status()
+    battery_level = power.get_battery_level()
+    print(f"{battery_status=} {battery_level=}")
+    battery_log = {
+        "timestamp": datetime.now().isoformat(),
+        "battery_level": battery_level,
+        "battery_status": battery_status["battery"],
+    }
+    write_log(
+        output_directory=output_directory,
+        log_name="battery.log.csv",
+        log_event=battery_log
+    )
+
     weather = get_current_weather()
     description_prompt = image_description_prompt(
-        battery=battery,
+        battery=battery_level if battery_level is not None else 1.0,
         history=[],
         weather=weather,
     )
@@ -96,6 +109,11 @@ def generate_and_render_image(output_directory: str):
 
     display_image = image_utils.scale_and_crop(image, 800, 480)
     display_image = image_utils.overlay_prompt(display_image, image_description)
+
+    print("Enabling display...")
+    power.enable_display_power()
+
+    print("Rendering image...")
     display.render(display_image)
 
     timestamp = datetime.now().isoformat()
@@ -104,20 +122,45 @@ def generate_and_render_image(output_directory: str):
     image_path = images_dir / f"{timestamp}.jpg"
     image.save(image_path, quality=99)
 
-    event = {
+    generation_log = {
         "timestamp": timestamp,
         "description_model_id": description_model.model_id,
         "description": image_description,
         "image_model_id": image_model.model_id,
         "image_prompt": image_prompt,
     }
-    log_path = Path(output_directory) / "piframe.log.csv"
+    write_log(
+        output_directory=output_directory,
+        log_name="piframe.log.csv",
+        log_event=generation_log
+    )
+
+    min_hour = 9
+    max_hour = 23
+    wakeup = datetime.now().replace(minute=0, second=0, microsecond=0)
+    if wakeup.hour >= max_hour:
+        wakeup = (wakeup + timedelta(days=1)).replace(hour=min_hour)
+    elif wakeup.hour <= min_hour:
+        wakeup = wakeup.replace(hour=min_hour)
+    else:
+        wakeup = wakeup + timedelta(hours=1)
+    print(f"Next wake up at {wakeup}.")
+    power.set_current_time()
+    power.set_alarm(wakeup)
+
+    if power.is_battery_powered():
+        print(f"Shutting down...")
+        power.shutdown()
+
+
+def write_log(output_directory: str, log_name: str, log_event: dict):
+    log_path = Path(output_directory) / log_name
     write_header = not log_path.exists()
     with open(log_path, "a") as f:
-        writer = csv.DictWriter(f, fieldnames=event.keys())
+        writer = csv.DictWriter(f, fieldnames=log_event.keys())
         if write_header:
             writer.writeheader()
-        writer.writerow(event)
+        writer.writerow(log_event)
 
 
 if __name__ == '__main__':
