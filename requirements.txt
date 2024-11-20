@@ -1,7 +1,7 @@
 awscli
 boto3
 requests
-pillow
+Pillow
 lgpio
 gpiozero
 rpi-lgpio
