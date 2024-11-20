@@ -5,6 +5,7 @@ from piframe.hardware.pijuice import PiJuice
 
 try:
     PIJUICE = PiJuice()
+    assert PIJUICE.status.GetStatus().get("data")
     pijuice_available = True
 except:
     pijuice_available = False
@@ -43,8 +44,8 @@ def set_alarm(wakeup: datetime):
 
 def shutdown():
     if pijuice_available:
-        # PIJUICE.power.SetPowerOff(30)
-        os.system(f"(sleep 5 && sudo shutdown -h now) &")
+        PIJUICE.power.SetPowerOff(30)
+        os.system(f"(sleep 5 && shutdown -h now) &")
 
 def enable_display_power():
     if pijuice_available:

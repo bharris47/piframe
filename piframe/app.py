@@ -22,6 +22,9 @@ def update_frame():
     generate_and_render_image(output_directory=args.output_directory)
 
 def generate_and_render_image(output_directory: str):
+    print("Enabling display...")
+    power.enable_display_power()
+
     bedrock = boto3.client(
         "bedrock-runtime",
     )
@@ -82,17 +85,18 @@ def generate_and_render_image(output_directory: str):
 
     battery_status = power.get_power_status()
     battery_level = power.get_battery_level()
-    print(f"{battery_status=} {battery_level=}")
-    battery_log = {
-        "timestamp": datetime.now().isoformat(),
-        "battery_level": battery_level,
-        "battery_status": battery_status["battery"],
-    }
-    write_log(
-        output_directory=output_directory,
-        log_name="battery.log.csv",
-        log_event=battery_log
-    )
+    if battery_status:
+        print(f"{battery_status=} {battery_level=}")
+        battery_log = {
+            "timestamp": datetime.now().isoformat(),
+            "battery_level": battery_level,
+            "battery_status": battery_status["battery"],
+        }
+        write_log(
+            output_directory=output_directory,
+            log_name="battery.log.csv",
+            log_event=battery_log
+        )
 
     weather = get_current_weather()
     description_prompt = image_description_prompt(
@@ -109,9 +113,6 @@ def generate_and_render_image(output_directory: str):
 
     display_image = image_utils.scale_and_crop(image, 800, 480)
     display_image = image_utils.overlay_prompt(display_image, image_description)
-
-    print("Enabling display...")
-    power.enable_display_power()
 
     print("Rendering image...")
     display.render(display_image)

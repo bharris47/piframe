@@ -16,11 +16,12 @@ ADJECTIVES = [
     "Lounging",
     "Smoking",
     "Binge-drinking",
-    "Gambling",
     "Dancing",
     "Partying",
     "Cute",
     "Evil",
+    "Psychedelic",
+    "Gangster",
 ]
 
 NOUNS = [
@@ -41,6 +42,7 @@ NOUNS = [
     "Monsteras",
     "House Plants",
     "Aliens",
+    "Fruits",
 ]
 
 STYLES = [
