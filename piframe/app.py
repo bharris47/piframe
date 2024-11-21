@@ -141,7 +141,7 @@ def generate_and_render_image(output_directory: str):
     wakeup = datetime.now().replace(minute=0, second=0, microsecond=0)
     if wakeup.hour >= max_hour:
         wakeup = (wakeup + timedelta(days=1)).replace(hour=min_hour)
-    elif wakeup.hour <= min_hour:
+    elif wakeup.hour < min_hour:
         wakeup = wakeup.replace(hour=min_hour)
     else:
         wakeup = wakeup + timedelta(hours=1)
