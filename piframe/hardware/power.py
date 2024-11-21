@@ -45,7 +45,7 @@ def set_alarm(wakeup: datetime):
 def shutdown():
     if pijuice_available:
         PIJUICE.power.SetPowerOff(30)
-        os.system(f"(sleep 5 && shutdown -h now) &")
+        os.system(f"sudo shutdown -h now")
 
 def enable_display_power():
     if pijuice_available:
