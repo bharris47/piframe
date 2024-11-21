@@ -4,9 +4,11 @@ sudo apt install -y \
   libjpeg-dev \
   swig \
   liblgpio-dev \
-  libfreetype6-dev \
-  python3-venv
+  libfreetype6-dev
+
+sudo pip install virtualenv
 virtualenv .venv
 source .venv/bin/activate
+
 pip install -r requirements.txt
 pip install -e .
