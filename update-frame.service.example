@@ -10,9 +10,11 @@ Type=simple
 User=ben
 WorkingDirectory=/home/ben/piframe
 ExecStart=/home/ben/piframe/bin/update-frame.sh
+Environment="PYTHONUNBUFFERED=1"
 Environment="STABILITY_API_KEY="
 Environment="AWS_ACCESS_KEY_ID="
 Environment="AWS_SECRET_ACCESS_KEY="
+Environment="AWS_DEFAULT_REGION="
 Restart=on-failure
 RestartSec=5
 

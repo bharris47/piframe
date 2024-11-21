@@ -4,7 +4,8 @@ sudo apt install -y \
   libjpeg-dev \
   swig \
   liblgpio-dev \
-  libfreetype6-dev
+  libfreetype6-dev \
+  pijuice-base
 
 sudo pip install virtualenv
 virtualenv .venv
