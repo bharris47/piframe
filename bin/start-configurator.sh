@@ -1,3 +1,3 @@
 #!/bin/bash
 source .venv/bin/activate
-streamlit run --server.address, 0.0.0.0 --server.headless true --serverPort 8080 piframe/app/configurator.py
+streamlit run piframe/app/configurator.py --server.headless=true --server.address=0.0.0.0 --server.port=8080
