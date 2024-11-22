@@ -8,15 +8,15 @@ from pathlib import Path
 from typing import Type
 
 import boto3
-from docutils.nodes import description
 
-from piframe import models, image_utils
+from piframe import image_utils
 from piframe.config import Config
 from piframe.hardware import display, power
 from piframe.models import Message, MessageContent, BedrockModel, StableApi, Model
 from piframe.prompts import image_description_prompt, image_generation_prompt, PromptContext
 from piframe.reflection import load_class, ModuleDefinition, T
 from piframe.weather import get_current_weather
+
 
 def update_frame():
     parser = ArgumentParser()
