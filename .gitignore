@@ -162,3 +162,4 @@ cython_debug/
 .idea/
 images/
 **/prompt_history.json
+config.json

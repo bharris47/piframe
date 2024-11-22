@@ -234,7 +234,7 @@ with st.sidebar:
             st.toast("Configuration saved!", icon="🎉")
             st.balloons()
     if refresh_image:
-        # os.system("sudo systemctl start update-frame")
+        os.system("sudo systemctl start update-frame")
         st.toast("Screen will refresh soon!", icon="🖼️")
 
     st.subheader("⚡ Power Status")
