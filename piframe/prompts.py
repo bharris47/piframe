@@ -104,7 +104,7 @@ class TopicStrategy(ABC):
 
     @abstractmethod
     def get_topic(self, context: PromptContext):
-        pass
+        raise NotImplementedError
 
 class RandomAdlib(TopicStrategy):
     def __init__(self, adjectives: Optional[list[str]] = None, nouns: Optional[list[str]] = None):

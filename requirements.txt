@@ -7,4 +7,5 @@ requests
 rpi-lgpio
 smbus
 spidev
+streamlit
 waveshare-epd @ git+https://github.com/waveshareteam/e-Paper.git@af4d8b49ccef5f8f5fb88e9a836b86bd3f0bbfe3#subdirectory=RaspberryPi_JetsonNano/python

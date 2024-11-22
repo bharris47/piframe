@@ -1,6 +1,6 @@
 {
   "artifact_directory": "/home/ben/artifacts",
-  "description_model":  {
+  "description_model": {
     "class_path": "piframe.models.Meta",
     "args": {
       "model_id": "meta.llama3-1-405b-instruct-v1:0",
@@ -20,8 +20,48 @@
     }
   },
   "topic_strategy": {
-    "class_path": "prompts.RandomAdlib",
+    "class_path": "piframe.prompts.RandomAdlib",
     "args": {
+      "adjectives": [
+        "Cozy",
+        "Mischevious",
+        "Space",
+        "Office-worker",
+        "Glamorous",
+        "Deceptive",
+        "Stylish",
+        "Leisurely",
+        "Lounging",
+        "Smoking",
+        "Binge-drinking",
+        "Dancing",
+        "Partying",
+        "Cute",
+        "Evil",
+        "Psychedelic",
+        "Gangster",
+        "Groovy"
+      ],
+      "nouns": [
+        "Animals",
+        "Hot Dogs",
+        "Robots",
+        "Astronauts",
+        "Pickles",
+        "Condiments",
+        "Wizards",
+        "Zombies",
+        "Dogs",
+        "Cats",
+        "Garden Gnomes",
+        "French Fries",
+        "Musical Instruments",
+        "Lobsters",
+        "Monsteras",
+        "House Plants",
+        "Aliens",
+        "Fruits"
+      ]
     }
   }
 }
