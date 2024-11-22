@@ -5,23 +5,41 @@ from argparse import ArgumentParser
 from collections import deque
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Type
 
 import boto3
+from docutils.nodes import description
 
 from piframe import models, image_utils
+from piframe.config import Config
 from piframe.hardware import display, power
-from piframe.models import Message, MessageContent
-from piframe.prompts import image_description_prompt, image_generation_prompt
+from piframe.models import Message, MessageContent, BedrockModel, StableApi, Model
+from piframe.prompts import image_description_prompt, image_generation_prompt, PromptContext
+from piframe.reflection import load_class, ModuleDefinition, T
 from piframe.weather import get_current_weather
 
 def update_frame():
     parser = ArgumentParser()
-    parser.add_argument("--output-directory", "-o", default=".")
+    parser.add_argument("--config-path", "-c", default="config.json")
     args = parser.parse_args()
 
-    generate_and_render_image(output_directory=args.output_directory)
+    generate_and_render_image(config_path=args.config_path)
 
-def generate_and_render_image(output_directory: str):
+def _instantiate_model(definition: ModuleDefinition[T], model_type_extras: dict[Type[Model], dict]) -> T:
+    model_class = load_class(definition)
+    model_args = definition.args
+    for model_type, extras in model_type_extras.items():
+        if issubclass(model_class, model_type):
+            model_args.update(extras)
+    return model_class(**model_args)
+
+
+def generate_and_render_image(config_path: str):
+    with open(config_path) as config_file:
+        config = Config(**json.load(config_file))
+
+    Path(config.artifact_directory).mkdir(exist_ok=True)
+
     print("Enabling display...")
     power.enable_display_power()
 
@@ -29,13 +47,20 @@ def generate_and_render_image(output_directory: str):
         "bedrock-runtime",
     )
 
-    description_model = models.Meta(
-        client=bedrock,
-        # model_id="us.meta.llama3-2-90b-instruct-v1:0",
-        model_id="meta.llama3-1-405b-instruct-v1:0",
-        max_gen_len=100,
-        temperature=1.0,
-    )
+    model_type_extras = {
+        BedrockModel: {"client": bedrock},
+        StableApi: {"api_key": os.environ["STABILITY_API_KEY"]}
+    }
+    description_model = _instantiate_model(config.description_model, model_type_extras)
+    image_model = _instantiate_model(config.image_model, model_type_extras)
+
+    # description_model = models.Meta(
+    #     client=bedrock,
+    #     # model_id="us.meta.llama3-2-90b-instruct-v1:0",
+    #     model_id="meta.llama3-1-405b-instruct-v1:0",
+    #     max_gen_len=100,
+    #     temperature=1.0,
+    # )
     # description_model = models.Anthropic(
     #     client=bedrock,
     #     model_id="anthropic.claude-3-5-sonnet-20241022-v2:0",
@@ -52,13 +77,12 @@ def generate_and_render_image(output_directory: str):
     #     output_format="jpg",
     #     negative_prompt="hazy, cloudy, foggy, diffuse, blur",
     # )
-    image_model = models.StableDiffusion3x(
-        model_id="sd3-large-turbo",
-        api_key=os.environ["STABILITY_API_KEY"],
-        aspect_ratio="16:9",
-        cfg_scale=None,
-        # negative_prompt="hazy, cloudy, foggy, diffuse, blur",
-    )
+    # image_model = models.StableDiffusion3x(
+    #     model_id="sd3-large-turbo",
+    #     api_key=os.environ["STABILITY_API_KEY"],
+    #     aspect_ratio="16:9",
+    #     cfg_scale=None,
+    # )
     # image_model = models.StableImageUltra(
     #     model_id="stable-image-ultra-api",
     #     api_key=os.environ["STABILITY_API_KEY"],
@@ -93,16 +117,20 @@ def generate_and_render_image(output_directory: str):
             "battery_status": battery_status["battery"],
         }
         write_log(
-            output_directory=output_directory,
+            output_directory=config.artifact_directory,
             log_name="battery.log.csv",
             log_event=battery_log
         )
 
-    weather = get_current_weather()
+    topic_strategy = load_class(config.topic_strategy)(**config.topic_strategy.args)
+    context = PromptContext(
+        weather=get_current_weather(),
+        battery_level=battery_level if battery_level is not None else 1.0,
+        history=prompt_history,
+    )
     description_prompt = image_description_prompt(
-        battery=battery_level if battery_level is not None else 1.0,
-        history=[],
-        weather=weather,
+        topic_strategy=topic_strategy,
+        context=context,
     )
     print(description_prompt)
     image_description = description_model.invoke([Message(content=[MessageContent(text=description_prompt)])]).strip()
@@ -118,7 +146,7 @@ def generate_and_render_image(output_directory: str):
     display.render(display_image)
 
     timestamp = datetime.now().isoformat()
-    images_dir = Path(output_directory) / "images"
+    images_dir = Path(config.artifact_directory) / "images"
     images_dir.mkdir(exist_ok=True)
     image_path = images_dir / f"{timestamp}.jpg"
     image.save(image_path, quality=99)
@@ -131,7 +159,7 @@ def generate_and_render_image(output_directory: str):
         "image_prompt": image_prompt,
     }
     write_log(
-        output_directory=output_directory,
+        output_directory=config.artifact_directory,
         log_name="piframe.log.csv",
         log_event=generation_log
     )
@@ -165,4 +193,4 @@ def write_log(output_directory: str, log_name: str, log_event: dict):
 
 
 if __name__ == '__main__':
-    update_frame()
+    generate_and_render_image("config.json")

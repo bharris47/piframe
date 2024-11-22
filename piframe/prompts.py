@@ -1,6 +1,8 @@
 import random
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Iterable
+from typing import Iterable, Optional
 
 from piframe.weather import Weather
 
@@ -90,31 +92,53 @@ The sentences must match the vibe of the current conditions:
 
 Respond only a JSON list containing the sentences."""
 
-def image_description_prompt(battery: float, history: Iterable[str], weather: Weather):
+@dataclass
+class PromptContext:
+    battery_level: float
+    weather: Weather
+    history: Iterable[str]
+
+class TopicStrategy(ABC):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    @abstractmethod
+    def get_topic(self, context: PromptContext):
+        pass
+
+class RandomAdlib(TopicStrategy):
+    def __init__(self, adjectives: Optional[list[str]] = None, nouns: Optional[list[str]] = None):
+        super().__init__()
+        self._adjectives = adjectives or ADJECTIVES
+        self._nouns = nouns or NOUNS
+
+    def get_topic(self, context: PromptContext):
+        adjective = random.choice(self._adjectives)
+        noun = random.choice(self._nouns) if context.battery_level > 0.05 else "Batteries"
+        return f"{adjective} {noun}"
+
+
+def image_description_prompt(topic_strategy: TopicStrategy, context: PromptContext):
     date = datetime.now()
     date_str = date.strftime("%A, %B %d, %Y")
     time_str = date.strftime("%I:%M %p")
 
-    adjective = random.choice(ADJECTIVES)
-    noun = random.choice(NOUNS) if battery > 0.05 else "Batteries"
-    topics_str = f"{adjective} {noun}"
-
     history_str = ""
-    if history:
+    if context.history:
         history_str = "Do not repeat concepts. Here are some recent descriptions you've generated:\n"
-        history_str += "\n".join([f"- {desc}" for desc in history])
+        history_str += "\n".join([f"- {desc}" for desc in context.history])
 
     contexts = [
         f"- Date: {date_str}",
         f"- Time: {time_str}",
     ]
-    if weather:
+    if weather := context.weather:
         contexts.append(f"- Current Weather: {weather.temperature:.0f} °F {weather.description}")
     context_str = "\n".join(contexts)
 
     return IMAGE_DESCRIPTION_PROMPT.format(
         context=context_str,
-        topic=topics_str,
+        topic=topic_strategy.get_topic(context),
         history=history_str,
     )
 

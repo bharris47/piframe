@@ -1,8 +1,9 @@
 boto3
-requests
-Pillow
-lgpio
 gpiozero
+lgpio
+Pillow
+pydantic
+requests
 rpi-lgpio
 smbus
 spidev

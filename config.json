@@ -1,0 +1,27 @@
+{
+  "artifact_directory": "/home/ben/artifacts",
+  "description_model":  {
+    "class_path": "piframe.models.Meta",
+    "args": {
+      "model_id": "meta.llama3-1-405b-instruct-v1:0",
+      "max_gen_len": 100,
+      "temperature": 1.0
+    }
+  },
+  "image_model": {
+    "class_path": "piframe.models.TitanImage",
+    "args": {
+      "model_id": "amazon.titan-image-generator-v2:0",
+      "imageGenerationConfig": {
+        "quality": "premium",
+        "width": 1280,
+        "height": 768
+      }
+    }
+  },
+  "topic_strategy": {
+    "class_path": "prompts.RandomAdlib",
+    "args": {
+    }
+  }
+}
