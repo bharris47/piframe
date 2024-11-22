@@ -11,7 +11,7 @@ from piframe.config import Config
 from piframe.hardware import power
 from piframe.reflection import ModuleDefinition
 
-CONFIG_PATH = "/home/ben/PycharmProjects/piframe/config.json"
+CONFIG_PATH = "config.json"
 
 
 if "models" not in st.session_state:
