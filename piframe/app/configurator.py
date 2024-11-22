@@ -1,4 +1,5 @@
 import json
+import os
 from dataclasses import dataclass
 from typing import Type
 
@@ -7,9 +8,11 @@ import streamlit as st
 
 from piframe import prompts
 from piframe.config import Config
+from piframe.hardware import power
 from piframe.reflection import ModuleDefinition
 
 CONFIG_PATH = "/home/ben/PycharmProjects/piframe/config.json"
+
 
 if "models" not in st.session_state:
     bedrock = boto3.client("bedrock")
@@ -120,7 +123,7 @@ def get_component_config(
     ][0]
     model_names = list(component_schemas)
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 2])
     with col1:
         selected_model_type = st.selectbox(
             label="Model Type",
@@ -207,14 +210,32 @@ pending_config["artifact_directory"] = st.text_input(
     label="Artifacts Directory",
     value=current_config.artifact_directory,
 )
-st.divider()
 
-st.header("Preview")
-st.write(pending_config)
+with st.sidebar:
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        save = st.button(label="Save", icon=":material/save:", use_container_width=True)
 
-if st.button(label="Save"):
-    with open(CONFIG_PATH, "w") as f:
-        save_config = Config(**pending_config)
-        json.dump(save_config.model_dump(), f, indent=2)
-        del st.session_state["current_config"]
-        st.write("Configuration saved!")
+    with col2:
+        refresh_image = st.button(label="New Image", icon=":material/rotate_right:", use_container_width=True)
+
+    if save:
+        with open(CONFIG_PATH, "w") as f:
+            save_config = Config(**pending_config)
+            json.dump(save_config.model_dump(), f, indent=2)
+            del st.session_state["current_config"]
+            st.toast("Configuration saved!", icon="🎉")
+            st.balloons()
+    if refresh_image:
+        # os.system("sudo systemctl start update-frame")
+        st.toast("Screen will refresh soon!", icon="🖼️")
+
+    status = power.get_power_status()
+    battery_level = power.get_battery_level()
+    if power.is_battery_powered():
+        power_status_string = f":battery: {battery_level:.2%}"
+    else:
+        power_status_string = f":electric_plug: Plugged in"
+    st.subheader("Power Status")
+    st.write(power_status_string)
+

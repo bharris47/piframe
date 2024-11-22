@@ -4,7 +4,7 @@
     "class_path": "piframe.models.Meta",
     "args": {
       "model_id": "meta.llama3-1-405b-instruct-v1:0",
-      "max_gen_len": 100,
+      "max_gen_len": 100.0,
       "temperature": 1.0
     }
   },
