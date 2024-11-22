@@ -113,10 +113,11 @@ DEFAULTS = {
 
 def get_component_config(
         section_name: str,
+        label: str,
         current_component_config: ModuleDefinition,
         component_schemas: dict[str, Component]
 ):
-    st.header(section_name)
+    st.markdown(f"#### {section_name}")
     current_description_model_type = [
         name for name, component in component_schemas.items()
         if component.class_path == current_component_config.class_path
@@ -126,7 +127,7 @@ def get_component_config(
     col1, col2 = st.columns([1, 2])
     with col1:
         selected_model_type = st.selectbox(
-            label="Model Type",
+            label=label,
             options=model_names,
             index=model_names.index(current_description_model_type)
         )
@@ -185,8 +186,11 @@ if "current_config" not in st.session_state:
 current_config: Config = st.session_state["current_config"]
 pending_config = {}
 
+st.markdown(f"### Configuration")
+
 pending_config["topic_strategy"] = get_component_config(
     section_name="Topic Strategy",
+    label="Strategy",
     current_component_config=current_config.topic_strategy,
     component_schemas=TOPIC_STRATEGY_SCHEMAS,
 )
@@ -194,6 +198,7 @@ st.divider()
 
 pending_config["description_model"] = get_component_config(
     section_name="Description Model",
+    label="Model",
     current_component_config=current_config.description_model,
     component_schemas=DESCRIPTION_MODEL_SCHEMAS,
 )
@@ -201,6 +206,7 @@ st.divider()
 
 pending_config["image_model"] = get_component_config(
     section_name="Image Model",
+    label="Model",
     current_component_config=current_config.image_model,
     component_schemas=IMAGE_MODEL_SCHEMAS,
 )
@@ -212,6 +218,7 @@ pending_config["artifact_directory"] = st.text_input(
 )
 
 with st.sidebar:
+    st.markdown("# 🖼️ ️Piframe")
     col1, col2 = st.columns([1, 1])
     with col1:
         save = st.button(label="Save", icon=":material/save:", use_container_width=True)
@@ -230,12 +237,14 @@ with st.sidebar:
         # os.system("sudo systemctl start update-frame")
         st.toast("Screen will refresh soon!", icon="🖼️")
 
+    st.subheader("⚡ Power Status")
     status = power.get_power_status()
     battery_level = power.get_battery_level()
     if power.is_battery_powered():
-        power_status_string = f":battery: {battery_level:.2%}"
+        power_status_string = f"Battery"
     else:
-        power_status_string = f":electric_plug: Plugged in"
-    st.subheader("Power Status")
+        power_status_string = f"Plugged in"
     st.write(power_status_string)
-
+    if battery_level is not None:
+        battery_icon = "🔋" if battery_level > 0.1 else "🪫"
+        st.progress(value=battery_level, text=f"{battery_icon} {battery_level:.0%}")
