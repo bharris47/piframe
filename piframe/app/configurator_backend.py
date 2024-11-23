@@ -75,7 +75,7 @@ async def save_config(config_update: ConfigUpdate):
 async def refresh_image():
     """Trigger screen refresh"""
     try:
-        # os.system("sudo systemctl start update-frame")
+        os.system("sudo systemctl start update-frame")
         return {"message": "Screen will refresh soon!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
