@@ -8,6 +8,7 @@ User=pi
 WorkingDirectory=/home/ben/piframe/piframe-frontend
 ExecStart=/usr/bin/npm start
 Restart=always
+Environment=PORT=8080
 Environment=NODE_ENV=production
 
 [Install]
