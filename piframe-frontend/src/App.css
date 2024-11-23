@@ -1,0 +1,356 @@
+:root {
+  --background-color: #f5f5f5;
+  --card-background: #ffffff;
+  --text-color: #213547;
+  --border-color: #e0e0e0;
+  --primary-color: #646cff;
+  --primary-hover: #535bf2;
+  --input-background: #ffffff;
+  --input-border: #d0d0d0;
+  --success-color: #4CAF50;
+  --success-hover: #45a049;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.config-app {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sidebar {
+  width: 150px;
+  padding: 25px;
+  background: var(--card-background);
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  height: 100vh;
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  z-index: 100;
+  border-radius: 8px;
+}
+
+.sidebar h2 {
+  margin: 0 0 25px 0;
+  font-size: 1.5rem;
+}
+
+.sidebar h3 {
+  margin: 20px 0 10px 0;
+  font-size: 1.2rem;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 35px;
+}
+
+.action-buttons button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.power-status {
+  padding-top: 25px;
+  border-top: 1px solid var(--border-color);
+}
+
+.power-status h3 {
+  margin: 0 0 15px 0;
+}
+
+.status-text {
+  margin-bottom: 15px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 220px;
+  max-width: 1000px;
+  margin-right: auto;
+}
+
+.config-section {
+  margin: 0 0 20px 0;
+  background: var(--card-background);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.config-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.selector-column {
+  padding-right: 15px;
+  border-right: 1px solid var(--border-color);
+}
+
+.params-column {
+  padding-left: 15px;
+  min-width: 0;
+}
+
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.list-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.list-items-container {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.list-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.list-item input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px;
+}
+
+.list-item button {
+  background-color: #ff4d4f;
+  color: white;
+  border: 1px solid #ff4d4f;
+  padding: 4px 8px;
+  font-size: 0.9em;
+}
+
+.list-item button:hover {
+  background-color: #ff7875;
+  border-color: #ff7875;
+}
+
+.list-item button:active {
+  background-color: #d9363e;
+  border-color: #d9363e;
+}
+
+.list-item:last-child {
+  margin-bottom: 0;
+}
+
+.dict-field {
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  background: var(--input-background);
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--input-background);
+  color: var(--text-color);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.1);
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background: var(--primary-hover);
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--card-background);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-header h1 {
+  margin: 0;
+  color: var(--text-color);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.battery-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-color);
+}
+
+.battery-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: var(--background-color);
+  border-radius: 4px;
+}
+
+.battery-level {
+  height: 12px;
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+.battery-indicator span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 0.8rem;
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.header-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.read-the-docs {
+  background: var(--card-background);
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  overflow: auto;
+  max-height: 300px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--card-background);
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.battery-text {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+progress.normal-battery::-webkit-progress-value {
+  background-color: #4CAF50;
+}
+
+progress.low-battery::-webkit-progress-value {
+  background-color: #f44336;
+}
+
+progress {
+  width: 100%;
+  height: 20px;
+  border-radius: 4px;
+  display: block;
+}
+
+.progress-container {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+}
+
+.progress-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 0.8rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  line-height: normal;
+}
