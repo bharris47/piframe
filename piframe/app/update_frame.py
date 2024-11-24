@@ -42,6 +42,7 @@ def generate_and_render_image(config_path: str):
 
     print("Enabling display...")
     power.enable_display_power()
+    power.set_current_time()
 
     bedrock = boto3.client(
         "bedrock-runtime",
@@ -129,7 +130,6 @@ def generate_and_render_image(config_path: str):
     else:
         wakeup = wakeup + timedelta(hours=1)
     print(f"Next wake up at {wakeup}.")
-    power.set_current_time()
     power.set_alarm(wakeup)
 
     if power.is_battery_powered():
