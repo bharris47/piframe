@@ -56,11 +56,9 @@ def get_battery_info() -> dict:
     if not pijuice_available:
         return {}
     
-    # Get basic status info
     status = get_power_status()
     charge_level = get_battery_level()
     
-    # Get detailed battery metrics
     temp_result = PIJUICE.status.GetBatteryTemperature()
     voltage_result = PIJUICE.status.GetBatteryVoltage()
     current_result = PIJUICE.status.GetBatteryCurrent()
@@ -69,7 +67,6 @@ def get_battery_info() -> dict:
     fault_result = PIJUICE.status.GetFaultStatus()
     profile_result = PIJUICE.config.GetBatteryProfileStatus()
     
-    # Combine all data into a single dictionary
     battery_info = {
         "status": status.get("battery"),
         "charge_level": charge_level,
