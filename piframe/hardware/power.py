@@ -50,3 +50,38 @@ def shutdown():
 def enable_display_power():
     if pijuice_available:
         PIJUICE.power.SetSystemPowerSwitch(500)
+
+def get_battery_info() -> dict:
+    """Get comprehensive battery status information from PiJuice."""
+    if not pijuice_available:
+        return {}
+    
+    # Get basic status info
+    status = get_power_status()
+    charge_level = get_battery_level()
+    
+    # Get detailed battery metrics
+    temp_result = PIJUICE.status.GetBatteryTemperature()
+    voltage_result = PIJUICE.status.GetBatteryVoltage()
+    current_result = PIJUICE.status.GetBatteryCurrent()
+    io_voltage_result = PIJUICE.status.GetIoVoltage()
+    io_current_result = PIJUICE.status.GetIoCurrent()
+    fault_result = PIJUICE.status.GetFaultStatus()
+    profile_result = PIJUICE.config.GetBatteryProfileStatus()
+    
+    # Combine all data into a single dictionary
+    battery_info = {
+        "status": status.get("battery"),
+        "charge_level": charge_level,
+        "power_input": status.get("powerInput"),
+        "power_input_5v": status.get("powerInput5vIo"),
+        "temperature_c": temp_result.get("data"),
+        "voltage_mv": voltage_result.get("data"),
+        "current_ma": current_result.get("data"),
+        "io_voltage_mv": io_voltage_result.get("data"),
+        "io_current_ma": io_current_result.get("data"),
+        "faults": fault_result.get("data", {}),
+        "profile": profile_result.get("data", {})
+    }
+    
+    return battery_info

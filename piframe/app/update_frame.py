@@ -63,20 +63,7 @@ def generate_and_render_image(config_path: str):
     except FileNotFoundError:
         pass
 
-    battery_status = power.get_power_status()
-    battery_level = power.get_battery_level()
-    if battery_status:
-        print(f"{battery_status=} {battery_level=}")
-        battery_log = {
-            "timestamp": datetime.now().isoformat(),
-            "battery_level": battery_level,
-            "battery_status": battery_status["battery"],
-        }
-        write_log(
-            output_directory=config.artifact_directory,
-            log_name="battery.log.csv",
-            log_event=battery_log
-        )
+    battery_level = log_battery_status(config)
 
     topic_strategy = load_class(config.topic_strategy)(**config.topic_strategy.args)
     context = PromptContext(
@@ -135,6 +122,32 @@ def generate_and_render_image(config_path: str):
     if power.is_battery_powered():
         print(f"Shutting down...")
         power.shutdown()
+
+
+def log_battery_status(config):
+    battery_info = power.get_battery_info()
+    if battery_info:
+        print(f"{battery_info=}")
+        battery_log = {
+            "timestamp": datetime.now().isoformat(),
+            "battery_level": battery_info["charge_level"],
+            "battery_status": battery_info["status"],
+            "power_input": battery_info["power_input"],
+            "power_input_5v": battery_info["power_input_5v"],
+            "temperature_c": battery_info["temperature_c"],
+            "voltage_mv": battery_info["voltage_mv"],
+            "current_ma": battery_info["current_ma"],
+            "io_voltage_mv": battery_info["io_voltage_mv"],
+            "io_current_ma": battery_info["io_current_ma"],
+            "profile": json.dumps(battery_info["profile"]),
+            "faults": json.dumps(battery_info["faults"]),
+        }
+        write_log(
+            output_directory=config.artifact_directory,
+            log_name="battery.log.csv",
+            log_event=battery_log
+        )
+    return battery_info.get("charge_level")
 
 
 def write_log(output_directory: str, log_name: str, log_event: dict):
