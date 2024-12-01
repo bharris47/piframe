@@ -1,5 +1,6 @@
 import csv
 import json
+import logging
 import os
 from argparse import ArgumentParser
 from collections import deque
@@ -17,6 +18,7 @@ from piframe.prompts import image_description_prompt, image_generation_prompt, P
 from piframe.reflection import load_class, ModuleDefinition, T
 from piframe.weather import get_current_weather
 
+logging.basicConfig(level=logging.DEBUG)
 
 def update_frame():
     parser = ArgumentParser()
