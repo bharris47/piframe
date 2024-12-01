@@ -18,7 +18,7 @@ from piframe.prompts import image_description_prompt, image_generation_prompt, P
 from piframe.reflection import load_class, ModuleDefinition, T
 from piframe.weather import get_current_weather
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 
 def update_frame():
     parser = ArgumentParser()

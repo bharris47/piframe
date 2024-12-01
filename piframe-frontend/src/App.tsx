@@ -322,7 +322,7 @@ function App() {
     },
     {
       name: "Stable Image Ultra",
-      class_path: "piframe.models.StableDiffusion3x",
+      class_path: "piframe.models.StableImageUltra",
       schema: [
         {
           type: "enum",
@@ -626,25 +626,19 @@ function App() {
       const imgSchema = IMAGE_MODEL_SCHEMAS.find(m => m.name === selectedImageModel)
       const topicSchema = TOPIC_STRATEGY_SCHEMAS.find(m => m.name === selectedTopicStrategy)
 
-      // Extract relevant configs for each model
+      // Extract relevant configs for each model, including default values
       const descriptionConfigs = descSchema?.schema.reduce((acc, field) => {
-        if (configs.description_model?.args?.[field.key] !== undefined) {
-          acc[field.key] = configs.description_model.args[field.key]
-        }
+        acc[field.key] = configs.description_model?.args?.[field.key] ?? field.default_value
         return acc
       }, {} as Record<string, any>)
 
       const imageConfigs = imgSchema?.schema.reduce((acc, field) => {
-        if (configs.image_model?.args?.[field.key] !== undefined) {
-          acc[field.key] = configs.image_model.args[field.key]
-        }
+        acc[field.key] = configs.image_model?.args?.[field.key] ?? field.default_value
         return acc
       }, {} as Record<string, any>)
 
       const topicConfigs = topicSchema?.schema.reduce((acc, field) => {
-        if (configs.topic_strategy?.args?.[field.key] !== undefined) {
-          acc[field.key] = configs.topic_strategy.args[field.key]
-        }
+        acc[field.key] = configs.topic_strategy?.args?.[field.key] ?? field.default_value
         return acc
       }, {} as Record<string, any>)
 
@@ -788,7 +782,26 @@ function App() {
               <h2>Description Model</h2>
               <select 
                 value={selectedDescriptionModel}
-                onChange={(e) => setSelectedDescriptionModel(e.target.value)}
+                onChange={(e) => {
+                  const newModel = e.target.value;
+                  setSelectedDescriptionModel(newModel);
+                  // Find the schema for the new model
+                  const newSchema = DESCRIPTION_MODEL_SCHEMAS.find(m => m.name === newModel);
+                  // Update configs with the new model's default model_id
+                  if (newSchema) {
+                    const modelIdField = newSchema.schema.find(f => f.key === 'model_id');
+                    setConfigs(prev => ({
+                      ...prev,
+                      description_model: {
+                        ...prev.description_model,
+                        args: {
+                          ...prev.description_model?.args,
+                          model_id: modelIdField?.default_value
+                        }
+                      }
+                    }));
+                  }
+                }}
               >
                 {descriptionModelNames.map(name => (
                   <option key={name} value={name}>{name}</option>
@@ -831,7 +844,26 @@ function App() {
               <h2>Image Model</h2>
               <select 
                 value={selectedImageModel}
-                onChange={(e) => setSelectedImageModel(e.target.value)}
+                onChange={(e) => {
+                  const newModel = e.target.value;
+                  setSelectedImageModel(newModel);
+                  // Find the schema for the new model
+                  const newSchema = IMAGE_MODEL_SCHEMAS.find(m => m.name === newModel);
+                  // Update configs with the new model's default model_id
+                  if (newSchema) {
+                    const modelIdField = newSchema.schema.find(f => f.key === 'model_id');
+                    setConfigs(prev => ({
+                      ...prev,
+                      image_model: {
+                        ...prev.image_model,
+                        args: {
+                          ...prev.image_model?.args,
+                          model_id: modelIdField?.default_value
+                        }
+                      }
+                    }));
+                  }
+                }}
               >
                 {imageModelNames.map(name => (
                   <option key={name} value={name}>{name}</option>
