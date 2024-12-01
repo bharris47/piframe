@@ -439,7 +439,14 @@ function App() {
           setSelectedImageModel(imgModel.name)
         }
 
-        // Set all configs at once
+        const topicModel = TOPIC_STRATEGY_SCHEMAS.find(m =>
+          m.class_path === data.topic_strategy?.class_path
+        )
+        if (topicModel) {
+          setSelectedTopicStrategy(topicModel.name)
+        }
+
+        // Set all configs at once, preserving the loaded args
         setConfigs({
           description_model: {
             args: data.description_model?.args || {}
