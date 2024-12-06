@@ -70,7 +70,8 @@ function App() {
     description_model?: { args: Record<string, any> },
     image_model?: { args: Record<string, any> },
     topic_strategy?: { args: Record<string, any> },
-    artifact_directory?: string
+    artifact_directory?: string,
+    schedule?: string
   }>({})
   const [selectedDescriptionModel, setSelectedDescriptionModel] = useState("Meta")
   const [selectedImageModel, setSelectedImageModel] = useState("Amazon Titan")
@@ -460,7 +461,8 @@ function App() {
               nouns: TOPIC_STRATEGY_SCHEMAS[0].schema[1].default_value
             }
           },
-          artifact_directory: data.artifact_directory || "artifacts"
+          artifact_directory: data.artifact_directory || "artifacts",
+          schedule: data.schedule || "0 9,12,15,17,21 * * 2,5"
         })
         
         setLoading(false)
@@ -662,7 +664,8 @@ function App() {
           class_path: topicSchema?.class_path,
           args: topicConfigs
         },
-        artifact_directory: configs.artifact_directory || "artifacts"
+        artifact_directory: configs.artifact_directory || "artifacts",
+        schedule: configs.schedule || "0 9,12,15,17,21 * * 2,5"
       }
 
       const response = await fetch(`${API_URL}/api/config`, {
@@ -735,6 +738,21 @@ function App() {
               </div>
             </div>
           )}
+        </div>
+
+        <div className="schedule-config">
+          <h3>⏰ Schedule</h3>
+          <div className="form-field">
+            <input
+              type="text"
+              value={configs.schedule ?? "0 9,12,15,17,21 * * 2,5"}
+              onChange={(e) => setConfigs(prev => ({
+                ...prev,
+                schedule: e.target.value
+              }))}
+              placeholder="Cron expression (e.g., 0 9,12,15,17,21 * * 2,5)"
+            />
+          </div>
         </div>
       </div>
 

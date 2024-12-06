@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Type
 
 import boto3
+from croniter import croniter
 
 from piframe import image_utils
 from piframe.config import Config
@@ -109,15 +110,8 @@ def generate_and_render_image(config_path: str):
         log_event=generation_log
     )
 
-    min_hour = 9
-    max_hour = 23
-    wakeup = datetime.now().replace(minute=0, second=0, microsecond=0)
-    if wakeup.hour >= max_hour:
-        wakeup = (wakeup + timedelta(days=1)).replace(hour=min_hour)
-    elif wakeup.hour < min_hour:
-        wakeup = wakeup.replace(hour=min_hour)
-    else:
-        wakeup = wakeup + timedelta(hours=1)
+    cron = croniter(config.schedule, datetime.now())
+    wakeup = cron.get_next(datetime)
     print(f"Next wake up at {wakeup}.")
     power.set_alarm(wakeup)
 

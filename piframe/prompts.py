@@ -114,14 +114,14 @@ class RandomAdlib(TopicStrategy):
 
     def get_topic(self, context: PromptContext):
         adjective = random.choice(self._adjectives)
-        noun = random.choice(self._nouns) if context.battery_level > 0.05 else "Batteries"
+        noun = random.choice(self._nouns)
         return f"{adjective} {noun}"
 
 
 def image_description_prompt(topic_strategy: TopicStrategy, context: PromptContext):
-    date = datetime.now()
-    date_str = date.strftime("%A, %B %d, %Y")
-    time_str = date.strftime("%I:%M %p")
+    timestamp = datetime.now()
+    date_str = timestamp.strftime("%A, %B %d, %Y")
+    time_str = timestamp.strftime("%I:%M %p")
 
     history_str = ""
     if context.history:
@@ -136,9 +136,16 @@ def image_description_prompt(topic_strategy: TopicStrategy, context: PromptConte
         contexts.append(f"- Current Weather: {weather.temperature:.0f} °F {weather.description}")
     context_str = "\n".join(contexts)
 
+    if context.battery_level <= 0.2:
+        topic = "dead batteries"
+    elif timestamp.hour >= 17:
+        topic = "happy hour"
+    else:
+        topic = topic_strategy.get_topic(context)
+
     return IMAGE_DESCRIPTION_PROMPT.format(
         context=context_str,
-        topic=topic_strategy.get_topic(context),
+        topic=topic,
         history=history_str,
     )
 

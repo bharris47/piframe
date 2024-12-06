@@ -1,5 +1,6 @@
 {
   "artifact_directory": "/home/ben/artifacts",
+  "schedule": "0 9,12,15,17,21 * * 2,5",
   "description_model": {
     "class_path": "piframe.models.Meta",
     "args": {
