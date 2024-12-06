@@ -20,6 +20,7 @@ body {
   display: flex;
   width: 100%;
   box-sizing: border-box;
+  padding-top: var(--error-banner-height, 0px);
 }
 
 .sidebar {
@@ -378,4 +379,17 @@ progress {
   background: var(--background-color);
   color: var(--text-color);
   font-size: 0.9rem;
+}
+
+.connection-error {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #ff4d4f;
+  color: white;
+  text-align: center;
+  padding: 8px;
+  z-index: 1000;
+  font-weight: 500;
 }

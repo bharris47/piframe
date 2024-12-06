@@ -153,4 +153,4 @@ def image_generation_prompt(image_description: str):
     style = random.choice(STYLES)
     if not image_description.endswith("."):
         image_description += "."
-    return (f"{image_description} High-contrast, sharp lines, minimal shading, black, white, red, yellow, green, blue, and orange, vibrant colors, {style} style.")
+    return (f"{image_description} High-contrast, sharp lines, minimal shading, vibrant colors, {style} style.")

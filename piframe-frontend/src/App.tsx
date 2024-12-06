@@ -90,6 +90,7 @@ function App() {
     message: '',
     visible: false
   });
+  const [connectionError, setConnectionError] = useState(false);
 
   // Move DESCRIPTION_MODEL_SCHEMAS inside the component
   const DESCRIPTION_MODEL_SCHEMAS: ComponentConfig[] = [
@@ -422,8 +423,13 @@ function App() {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/config`)
-        const data = await response.json()
+        setLoading(true);
+        setConnectionError(false);
+        const response = await fetch(`${API_URL}/api/config`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
         
         // Set initial model selections based on class_path
         const descModel = DESCRIPTION_MODEL_SCHEMAS.find(m => 
@@ -465,32 +471,40 @@ function App() {
           schedule: data.schedule || "0 9,12,15,17,21 * * 2,5"
         })
         
-        setLoading(false)
+        setLoading(false);
       } catch (error) {
-        console.error('Failed to load config:', error)
-        setLoading(false)
+        console.error('Failed to load config:', error);
+        setConnectionError(true);
+        setLoading(false);
+        showToast('Failed to connect to backend ⚠️');
       }
-    }
-    fetchConfig()
-  }, [])
+    };
+    fetchConfig();
+  }, []);
 
   // Poll power status
   useEffect(() => {
     const pollPowerStatus = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/power`)
-        const data = await response.json()
-        setBatteryLevel(data.battery_level)
-        setIsPowered(!data.is_battery_powered)
+        const response = await fetch(`${API_URL}/api/power`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setBatteryLevel(data.battery_level);
+        setIsPowered(!data.is_battery_powered);
+        // Clear connection error if we successfully connect
+        setConnectionError(false);
       } catch (error) {
-        console.error('Failed to fetch power status:', error)
+        console.error('Failed to fetch power status:', error);
+        setConnectionError(true);
       }
-    }
+    };
 
-    pollPowerStatus() // Initial fetch
-    const interval = setInterval(pollPowerStatus, 30000) // Poll every 30 seconds
-    return () => clearInterval(interval)
-  }, [])
+    pollPowerStatus();
+    const interval = setInterval(pollPowerStatus, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Get list of available models
   const descriptionModelNames = DESCRIPTION_MODEL_SCHEMAS.map(m => m.name)
@@ -701,6 +715,11 @@ function App() {
 
   return (
     <div className="config-app">
+      {connectionError && (
+        <div className="connection-error">
+          Unable to connect to backend server
+        </div>
+      )}
       {toast.visible && (
         <div className="toast">
           {toast.message}
