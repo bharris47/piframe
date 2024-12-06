@@ -137,7 +137,7 @@ def image_description_prompt(topic_strategy: TopicStrategy, context: PromptConte
     context_str = "\n".join(contexts)
 
     if context.battery_level <= 0.2:
-        topic = "dead batteries"
+        topic = "drained batteries"
     elif timestamp.hour >= 17:
         topic = "happy hour"
     else:
