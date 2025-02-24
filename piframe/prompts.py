@@ -62,7 +62,6 @@ STYLES = [
 IMAGE_DESCRIPTION_PROMPT ="""You generate ridiculous image descriptions for a text-to-image generator.
 
 Requirements
-- Limit the description to 15 words.
 - Be extremely detailed about the setting and subject.
 - Descriptions must be non-sensical and hilarious.
 - The day of the week cannot be directly represented visually, but abstract is fine.
@@ -80,6 +79,15 @@ Use the following context to tailor your descriptions
 Write a description about {topic}.
 
 Respond only with the image description in plain text.
+"""
+
+IMAGE_TITLE_PROMPT ="""You generate pretentious, artsy-fartsy artwork titles given an image description. 
+
+Image description:
+{description}
+
+Limit titles to 15 words or fewer.
+Respond only with the title in plain text.
 """
 
 SIMPLE_PROMPT = """Give me 5 sentences in the form of <adjective> <noun> in <location> <action>. 
@@ -148,6 +156,9 @@ def image_description_prompt(topic_strategy: TopicStrategy, context: PromptConte
         topic=topic,
         history=history_str,
     )
+
+def image_title_prompt(description: str):
+    return IMAGE_TITLE_PROMPT.format(description=description)
 
 def image_generation_prompt(image_description: str):
     style = random.choice(STYLES)

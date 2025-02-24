@@ -15,7 +15,7 @@ from piframe import image_utils
 from piframe.config import Config
 from piframe.hardware import display, power
 from piframe.models import Message, MessageContent, BedrockModel, StableApi, Model
-from piframe.prompts import image_description_prompt, image_generation_prompt, PromptContext
+from piframe.prompts import image_description_prompt, image_generation_prompt, PromptContext, image_title_prompt
 from piframe.reflection import load_class, ModuleDefinition, T
 from piframe.weather import get_current_weather
 
@@ -80,13 +80,14 @@ def generate_and_render_image(config_path: str):
     )
     print(description_prompt)
     image_description = description_model.invoke([Message(content=[MessageContent(text=description_prompt)])]).strip()
-
+    title_prompt = image_title_prompt(description=image_description)
+    image_title = description_model.invoke([Message(content=[MessageContent(text=title_prompt)])]).strip()
     image_prompt = image_generation_prompt(image_description=image_description)
-    print(image_prompt)
-    image = image_model.invoke([Message(content=[MessageContent(text=image_prompt)])])
+    print(f"{image_title=} {image_prompt=}")
 
+    image = image_model.invoke([Message(content=[MessageContent(text=image_prompt)])])
     display_image = image_utils.scale_and_crop(image, 800, 480)
-    display_image = image_utils.overlay_prompt(display_image, image_description)
+    display_image = image_utils.overlay_prompt(display_image, image_title)
 
     print("Rendering image...")
     display.render(display_image)
