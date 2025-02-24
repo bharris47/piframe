@@ -88,7 +88,7 @@ Titles should be succinct, mildly cryptic, but capture the overall vibes of the 
 Image description:
 {description}
 
-Limit titles to 15 words or fewer.
+Limit titles to 10 words or fewer.
 Respond only with the title in plain text.
 """
 
