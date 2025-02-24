@@ -101,6 +101,7 @@ def generate_and_render_image(config_path: str):
     generation_log = {
         "timestamp": timestamp,
         "description_model_id": description_model.model_id,
+        "title": image_title,
         "description": image_description,
         "image_model_id": image_model.model_id,
         "image_prompt": image_prompt,

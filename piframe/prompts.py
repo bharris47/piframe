@@ -81,7 +81,9 @@ Write a description about {topic}.
 Respond only with the image description in plain text.
 """
 
-IMAGE_TITLE_PROMPT ="""You generate pretentious, artsy-fartsy artwork titles given an image description. 
+IMAGE_TITLE_PROMPT ="""You generate artsy-fartsy artwork titles given an image description.
+
+Titles should be succinct, mildly cryptic, but capture the overall vibes of the description.
 
 Image description:
 {description}
