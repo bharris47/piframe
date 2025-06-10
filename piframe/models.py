@@ -1,5 +1,5 @@
 import json
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 from base64 import b64decode
 from dataclasses import dataclass, asdict
 from io import BytesIO
@@ -7,6 +7,8 @@ from typing import Literal, TypeVar, Generic, Optional
 
 import requests
 from PIL import Image
+from openai import OpenAI
+
 
 @dataclass
 class MessageContent:
@@ -178,3 +180,29 @@ class StableImageUltra(StableApi):
     @property
     def url(self):
         return "https://api.stability.ai/v2beta/stable-image/generate/ultra"
+
+class OpenAIImage(Model[Image.Image]):
+    def __init__(self, client: Optional[OpenAI] = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._client = client or OpenAI()
+
+    def invoke(self, messages: list[Message]) -> Image.Image:
+        image_description = messages[0].content[0].text
+        print(self.model_id, image_description)
+        response = self._client.responses.create(
+            model=self.model_id,
+            input=image_description,
+            tools=[{"type": "image_generation"}],
+            **self._model_args,
+        )
+
+        image_data = [
+            output.result
+            for output in response.output
+            if output.type == "image_generation_call"
+        ]
+
+        if image_data:
+            image_base64 = image_data[0]
+            image_bytes = b64decode(image_base64)
+            return Image.open(BytesIO(image_bytes))
