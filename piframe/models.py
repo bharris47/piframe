@@ -182,7 +182,7 @@ class StableImageUltra(StableApi):
         return "https://api.stability.ai/v2beta/stable-image/generate/ultra"
 
 
-class OpenAIModel(ABC, Model[T]):
+class OpenAIModel(Model[T], ABC):
     def __init__(self, client: Optional[OpenAI] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._client = client
