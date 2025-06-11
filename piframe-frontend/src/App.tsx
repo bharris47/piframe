@@ -166,6 +166,38 @@ function App() {
           max_value: 1.0
         }
       ]
+    },
+    {
+      name: "OpenAI",
+      class_path: "piframe.models.OpenAIText",
+      schema: [
+        {
+          type: "enum",
+          label: "Model ID",
+          key: "model_id",
+          required: true,
+          default_value: "gpt-4.1-mini",
+          options: ["gpt-4.1-nano", "gpt-4.1-mini", "gpt-4.1"],
+        },
+        {
+          type: "int",
+          label: "Max Tokens",
+          key: "max_completion_tokens",
+          required: true,
+          default_value: 1000,
+          min_value: 1,
+          max_value: 4096
+        },
+        {
+          type: "float",
+          label: "Temperature",
+          key: "temperature",
+          required: true,
+          default_value: 0.7,
+          min_value: 0.0,
+          max_value: 2.0
+        }
+      ]
     }
   ];
 

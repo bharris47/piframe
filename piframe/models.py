@@ -181,10 +181,24 @@ class StableImageUltra(StableApi):
     def url(self):
         return "https://api.stability.ai/v2beta/stable-image/generate/ultra"
 
-class OpenAIImage(Model[Image.Image]):
-    def __init__(self, client: Optional[OpenAI] = None, quality: Literal["low", "medium", "high"] = "medium", *args, **kwargs):
+
+class OpenAIModel(ABC, Model[T]):
+    def __init__(self, client: Optional[OpenAI] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._client = client or OpenAI()
+        self._client = client
+
+class OpenAIText(OpenAIModel[str]):
+    def invoke(self, messages: list[Message]) -> T:
+        response = self._client.responses.create(
+            model=self._model_id,
+            input=messages[0].content[0].text,
+            **self._model_args,
+        )
+        return response.output_text
+
+class OpenAIImage(OpenAIModel[Image.Image]):
+    def __init__(self, quality: Literal["low", "medium", "high"] = "medium", *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._quality = quality
 
     def invoke(self, messages: list[Message]) -> Image.Image:
