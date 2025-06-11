@@ -182,7 +182,7 @@ function App() {
         {
           type: "int",
           label: "Max Tokens",
-          key: "max_completion_tokens",
+          key: "max_output_tokens",
           required: true,
           default_value: 1000,
           min_value: 1,
