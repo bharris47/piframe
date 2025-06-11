@@ -185,7 +185,7 @@ class StableImageUltra(StableApi):
 class OpenAIModel(Model[T], ABC):
     def __init__(self, client: Optional[OpenAI] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._client = client
+        self._client = client or OpenAI()
 
 class OpenAIText(OpenAIModel[str]):
     def invoke(self, messages: list[Message]) -> T:
