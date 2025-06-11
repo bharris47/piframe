@@ -188,21 +188,15 @@ class OpenAIImage(Model[Image.Image]):
 
     def invoke(self, messages: list[Message]) -> Image.Image:
         image_description = messages[0].content[0].text
-        print(self.model_id, image_description)
-        response = self._client.responses.create(
+        result = self._client.images.generate(
             model=self.model_id,
-            input=image_description,
-            tools=[{"type": "image_generation"}],
-            **self._model_args,
+            prompt=image_description,
+            size="1536x1024",
+            background="opaque",
+            quality="high",
+            output_format="jpeg",
+            output_compression=99,
         )
-
-        image_data = [
-            output.result
-            for output in response.output
-            if output.type == "image_generation_call"
-        ]
-
-        if image_data:
-            image_base64 = image_data[0]
-            image_bytes = b64decode(image_base64)
-            return Image.open(BytesIO(image_bytes))
+        image_base64 = result.data[0].b64_json
+        image_bytes = b64decode(image_base64)
+        return Image.open(BytesIO(image_bytes))

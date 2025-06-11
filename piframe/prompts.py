@@ -63,7 +63,7 @@ IMAGE_DESCRIPTION_PROMPT ="""You generate ridiculous image descriptions for a te
 
 Requirements
 - Be extremely detailed about the setting and subject.
-- Descriptions must be non-sensical and hilarious.
+- Descriptions must be nonsensical and hilarious.
 - The day of the week cannot be directly represented visually, but abstract is fine.
 - Exclude quotes, exclamations, or other sayings as they will not be reflected in the image.
 - Nudity is strictly forbidden.
@@ -148,10 +148,10 @@ def image_description_prompt(topic_strategy: TopicStrategy, context: PromptConte
 
     if context.battery_level <= 0.2:
         topic = "drained batteries"
-    elif timestamp.hour >= 17:
-        topic = "happy hour"
     else:
         topic = topic_strategy.get_topic(context)
+        if timestamp.hour >= 18:
+            topic = f"{topic} at happy hour"
 
     return IMAGE_DESCRIPTION_PROMPT.format(
         context=context_str,
