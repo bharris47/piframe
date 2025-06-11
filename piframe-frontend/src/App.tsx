@@ -84,7 +84,8 @@ function App() {
     Anthropic: [],
     "Amazon Titan": [],
     "Stable Diffusion": [],
-    "Stable Image Ultra": []
+    "Stable Image Ultra": [],
+    "OpenAI": [],
   })
   const [toast, setToast] = useState<{message: string, visible: boolean}>({
     message: '',
@@ -351,6 +352,20 @@ function App() {
           min_length: 0,
           max_length: 1000
         }
+      ]
+    },
+    {
+      name: "OpenAI",
+      class_path: "piframe.models.OpenAIImage",
+      schema: [
+        {
+          type: "enum",
+          label: "Model ID",
+          key: "model_id",
+          required: true,
+          default_value: "gpt-image-1",
+          options: ["gpt-image-1"]
+        },
       ]
     }
   ];
