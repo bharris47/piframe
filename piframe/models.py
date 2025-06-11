@@ -190,7 +190,7 @@ class OpenAIModel(Model[T], ABC):
 class OpenAIText(OpenAIModel[str]):
     def invoke(self, messages: list[Message]) -> T:
         response = self._client.responses.create(
-            model=self._model_id,
+            model=self.model_id,
             input=messages[0].content[0].text,
             **self._model_args,
         )
