@@ -366,6 +366,14 @@ function App() {
           default_value: "gpt-image-1",
           options: ["gpt-image-1"]
         },
+        {
+          type: "enum",
+          label: "Quality",
+          key: "quality",
+          required: true,
+          default_value: "medium",
+          options: ["low", "medium", "high"]
+        },
       ]
     }
   ];
