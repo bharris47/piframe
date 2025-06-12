@@ -4,7 +4,7 @@ import logging
 import os
 from argparse import ArgumentParser
 from collections import deque
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Type
 

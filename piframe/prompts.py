@@ -54,7 +54,7 @@ STYLES = [
     "Pixel Art, colorful, sharp, stylized, retro video game feel.",
     "Stippling portrait, smooth, colorfully, inked outlines with gentle stipple-style shading.",
     "Vector Art style, hard-edged shapes and limited color palette, no gradients, no shading bold colors, geometric.",
-    "Watercolor Pastel, soft gradients, gentle blending, minimal outlines.",
+    "Gouache style, deep midtones, high saturation, soft gradients, gentle blending, minimal outlines.",
     "Retro Risograph, grain textures, high contrast colors, duotone feel.",
 ]
 
