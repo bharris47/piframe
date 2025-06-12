@@ -31,13 +31,15 @@ WEATHER_CODE_MAPPING = {
     86: "Snow Showers",
     95: "Thunderstorm",
     96: "Light Thunderstorm w/ Hail",
-    99: "Thunderstorm w/ Hail"
+    99: "Thunderstorm w/ Hail",
 }
+
 
 @dataclass
 class Weather:
     temperature: float
     description: str
+
 
 def get_current_weather() -> Optional[Weather]:
     # SF

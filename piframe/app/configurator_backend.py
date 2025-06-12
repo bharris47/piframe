@@ -23,14 +23,17 @@ app.add_middleware(
 
 CONFIG_PATH = "config.json"
 
+
 # Pydantic models for request/response
 class PowerStatus(BaseModel):
     is_battery_powered: bool
     battery_level: float | None
     power_status_string: str
 
+
 class ConfigUpdate(BaseModel):
     config: Dict[str, Any]
+
 
 @app.get("/api/models")
 async def get_models():
@@ -38,6 +41,7 @@ async def get_models():
     bedrock = boto3.client("bedrock")
     models = bedrock.list_foundation_models()["modelSummaries"]
     return {"models": models}
+
 
 @app.get("/api/power")
 async def get_power():
@@ -48,8 +52,9 @@ async def get_power():
     return PowerStatus(
         is_battery_powered=is_battery,
         battery_level=battery_level,
-        power_status_string="Battery" if is_battery else "Plugged in"
+        power_status_string="Battery" if is_battery else "Plugged in",
     )
+
 
 @app.get("/api/config")
 async def get_config():
@@ -59,6 +64,7 @@ async def get_config():
             return json.load(f)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Config file not found")
+
 
 @app.post("/api/config")
 async def save_config(config_update: ConfigUpdate):
@@ -70,6 +76,7 @@ async def save_config(config_update: ConfigUpdate):
         return {"message": "Configuration saved!"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 @app.post("/api/refresh")
 async def refresh_image():

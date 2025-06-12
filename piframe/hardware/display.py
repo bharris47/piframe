@@ -4,9 +4,11 @@ from PIL.Image import Image
 
 try:
     from waveshare_epd import epd7in3e
+
     display_available = True
 except:
     display_available = False
+
 
 def render(image: Image):
     if display_available:

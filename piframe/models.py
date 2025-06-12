@@ -21,7 +21,9 @@ class Message:
     content: list[MessageContent]
     role: Literal["user", "assistant"] = "user"
 
+
 T = TypeVar("T")
+
 
 class Model(ABC, Generic[T]):
     def __init__(self, model_id: str, *args, **kwargs):
@@ -31,6 +33,7 @@ class Model(ABC, Generic[T]):
     @abstractmethod
     def invoke(self, messages: list[Message]) -> T:
         raise NotImplementedError
+
 
 class BedrockModel(Model[T]):
     def __init__(self, client, *args, **kwargs):
@@ -68,6 +71,7 @@ class Anthropic(BedrockModel[str]):
     def _parse_response(self, response: dict) -> str:
         return response["content"][0]["text"]
 
+
 class Meta(BedrockModel[str]):
     def _get_request_body(self, messages: list[Message]) -> dict:
         formatted_prompt = f"""<|begin_of_text|><|start_header_id|>user<|end_header_id|>
@@ -81,6 +85,7 @@ class Meta(BedrockModel[str]):
 
     def _parse_response(self, response: dict) -> str:
         return response["generation"]
+
 
 class StableImage(BedrockModel[Image.Image]):
     def _get_request_body(self, messages: list[Message]) -> dict:
@@ -110,6 +115,7 @@ class StableXL(BedrockModel[Image.Image]):
         image_bytes = b64decode(response.get("artifacts")[0].get("base64"))
         return Image.open(BytesIO(image_bytes))
 
+
 class TitanImage(BedrockModel[Image.Image]):
     def _get_request_body(self, messages: list[Message]) -> dict:
         return {
@@ -119,24 +125,25 @@ class TitanImage(BedrockModel[Image.Image]):
             },
             "imageGenerationConfig": {
                 "numberOfImages": 1,
-                **self._model_args.get("imageGenerationConfig", {})
-            }
+                **self._model_args.get("imageGenerationConfig", {}),
+            },
         }
 
     def _parse_response(self, response: dict) -> Image.Image:
         image_bytes = b64decode(response.get("images")[0].encode())
         return Image.open(BytesIO(image_bytes))
 
+
 class StableApi(Model[Image.Image]):
     def __init__(
-            self,
-            api_key: str,
-            aspect_ratio: str,
-            cfg_scale: Optional[int] = 8,
-            negative_prompt: Optional[str] = None,
-            output_format: str = "jpeg",
-            *args,
-            **kwargs
+        self,
+        api_key: str,
+        aspect_ratio: str,
+        cfg_scale: Optional[int] = 8,
+        negative_prompt: Optional[str] = None,
+        output_format: str = "jpeg",
+        *args,
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self._api_key = api_key
@@ -148,10 +155,7 @@ class StableApi(Model[Image.Image]):
     def invoke(self, messages: list[Message]) -> T:
         response = requests.post(
             self.url,
-            headers={
-                "authorization": f"Bearer {self._api_key}",
-                "accept": "image/*"
-            },
+            headers={"authorization": f"Bearer {self._api_key}", "accept": "image/*"},
             files={"none": ""},
             data={
                 "model": self.model_id,
@@ -171,10 +175,12 @@ class StableApi(Model[Image.Image]):
     def url(self):
         raise NotImplementedError
 
+
 class StableDiffusion3x(StableApi):
     @property
     def url(self):
         return "https://api.stability.ai/v2beta/stable-image/generate/sd3"
+
 
 class StableImageUltra(StableApi):
     @property
@@ -187,6 +193,7 @@ class OpenAIModel(Model[T], ABC):
         super().__init__(*args, **kwargs)
         self._client = client or OpenAI()
 
+
 class OpenAIText(OpenAIModel[str]):
     def invoke(self, messages: list[Message]) -> T:
         response = self._client.responses.create(
@@ -196,8 +203,11 @@ class OpenAIText(OpenAIModel[str]):
         )
         return response.output_text
 
+
 class OpenAIImage(OpenAIModel[Image.Image]):
-    def __init__(self, quality: Literal["low", "medium", "high"] = "medium", *args, **kwargs):
+    def __init__(
+        self, quality: Literal["low", "medium", "high"] = "medium", *args, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self._quality = quality
 

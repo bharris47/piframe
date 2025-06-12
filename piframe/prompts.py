@@ -59,7 +59,7 @@ STYLES = [
     "Ukiyo-e",
 ]
 
-IMAGE_DESCRIPTION_PROMPT ="""You generate ridiculous image descriptions for a text-to-image generator.
+IMAGE_DESCRIPTION_PROMPT = """You generate ridiculous image descriptions for a text-to-image generator.
 
 Requirements
 - Be extremely detailed about the setting and subject.
@@ -81,7 +81,7 @@ Write a description about {topic}.
 Respond only with the image description in plain text.
 """
 
-IMAGE_TITLE_PROMPT ="""You generate artsy-fartsy artwork titles given an image description.
+IMAGE_TITLE_PROMPT = """You generate artsy-fartsy artwork titles given an image description.
 
 Titles should be succinct, mildly cryptic, but capture the overall vibes of the description.
 
@@ -102,11 +102,13 @@ The sentences must match the vibe of the current conditions:
 
 Respond only a JSON list containing the sentences."""
 
+
 @dataclass
 class PromptContext:
     battery_level: float
     weather: Weather
     history: Iterable[str]
+
 
 class TopicStrategy(ABC):
     def __init__(self, *args, **kwargs):
@@ -116,8 +118,11 @@ class TopicStrategy(ABC):
     def get_topic(self, context: PromptContext):
         raise NotImplementedError
 
+
 class RandomAdlib(TopicStrategy):
-    def __init__(self, adjectives: Optional[list[str]] = None, nouns: Optional[list[str]] = None):
+    def __init__(
+        self, adjectives: Optional[list[str]] = None, nouns: Optional[list[str]] = None
+    ):
         super().__init__()
         self._adjectives = adjectives or ADJECTIVES
         self._nouns = nouns or NOUNS
@@ -143,7 +148,9 @@ def image_description_prompt(topic_strategy: TopicStrategy, context: PromptConte
         f"- Time: {time_str}",
     ]
     if weather := context.weather:
-        contexts.append(f"- Current Weather: {weather.temperature:.0f} °F {weather.description}")
+        contexts.append(
+            f"- Current Weather: {weather.temperature:.0f} °F {weather.description}"
+        )
     context_str = "\n".join(contexts)
 
     if context.battery_level <= 0.2:
@@ -159,11 +166,13 @@ def image_description_prompt(topic_strategy: TopicStrategy, context: PromptConte
         history=history_str,
     )
 
+
 def image_title_prompt(description: str):
     return IMAGE_TITLE_PROMPT.format(description=description)
+
 
 def image_generation_prompt(image_description: str):
     style = random.choice(STYLES)
     if not image_description.endswith("."):
         image_description += "."
-    return (f"{image_description} High-contrast, sharp lines, minimal shading, vibrant colors, {style} style.")
+    return f"{image_description} High-contrast, sharp lines, minimal shading, vibrant colors, {style} style."

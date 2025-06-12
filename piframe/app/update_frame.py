@@ -10,16 +10,23 @@ from typing import Type
 
 import boto3
 from croniter import croniter
+from unidecode import unidecode
 
 from piframe import image_utils
 from piframe.config import Config
 from piframe.hardware import display, power
 from piframe.models import Message, MessageContent, BedrockModel, StableApi, Model
-from piframe.prompts import image_description_prompt, image_generation_prompt, PromptContext, image_title_prompt
+from piframe.prompts import (
+    image_description_prompt,
+    image_generation_prompt,
+    PromptContext,
+    image_title_prompt,
+)
 from piframe.reflection import load_class, ModuleDefinition, T
 from piframe.weather import get_current_weather
 
 logging.basicConfig(level=logging.ERROR)
+
 
 def update_frame():
     parser = ArgumentParser()
@@ -28,7 +35,10 @@ def update_frame():
 
     generate_and_render_image(config_path=args.config_path)
 
-def _instantiate_model(definition: ModuleDefinition[T], model_type_extras: dict[Type[Model], dict]) -> T:
+
+def _instantiate_model(
+    definition: ModuleDefinition[T], model_type_extras: dict[Type[Model], dict]
+) -> T:
     model_class = load_class(definition)
     model_args = definition.args
     for model_type, extras in model_type_extras.items():
@@ -53,7 +63,7 @@ def generate_and_render_image(config_path: str):
 
     model_type_extras = {
         BedrockModel: {"client": bedrock},
-        StableApi: {"api_key": os.environ["STABILITY_API_KEY"]}
+        StableApi: {"api_key": os.environ["STABILITY_API_KEY"]},
     }
     description_model = _instantiate_model(config.description_model, model_type_extras)
     image_model = _instantiate_model(config.image_model, model_type_extras)
@@ -79,9 +89,15 @@ def generate_and_render_image(config_path: str):
         context=context,
     )
     print(description_prompt)
-    image_description = description_model.invoke([Message(content=[MessageContent(text=description_prompt)])]).strip()
+    image_description = description_model.invoke(
+        [Message(content=[MessageContent(text=description_prompt)])]
+    ).strip()
     title_prompt = image_title_prompt(description=image_description)
-    image_title = description_model.invoke([Message(content=[MessageContent(text=title_prompt)])]).strip()
+    image_title = unidecode(
+        description_model.invoke(
+            [Message(content=[MessageContent(text=title_prompt)])]
+        ).strip()
+    )
     image_prompt = image_generation_prompt(image_description=image_description)
     print(f"{image_title=} {image_prompt=}")
 
@@ -109,7 +125,7 @@ def generate_and_render_image(config_path: str):
     write_log(
         output_directory=config.artifact_directory,
         log_name="piframe.log.csv",
-        log_event=generation_log
+        log_event=generation_log,
     )
 
     cron = croniter(config.schedule, datetime.now())
@@ -143,7 +159,7 @@ def log_battery_status(config):
         write_log(
             output_directory=config.artifact_directory,
             log_name="battery.log.csv",
-            log_event=battery_log
+            log_event=battery_log,
         )
     return battery_info.get("charge_level")
 
@@ -158,5 +174,5 @@ def write_log(output_directory: str, log_name: str, log_event: dict):
         writer.writerow(log_event)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     generate_and_render_image("config.json")

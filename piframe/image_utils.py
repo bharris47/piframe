@@ -1,7 +1,12 @@
 from PIL import Image, ImageDraw, ImageFont
 
 
-def scale_and_crop(img: Image.Image, target_width: int, target_height: int, resample: int = Image.LANCZOS) -> Image.Image:
+def scale_and_crop(
+    img: Image.Image,
+    target_width: int,
+    target_height: int,
+    resample: int = Image.LANCZOS,
+) -> Image.Image:
     img_ratio = img.width / img.height
     target_ratio = target_width / target_height
 
@@ -59,7 +64,7 @@ def overlay_prompt(image: Image.Image, text: str) -> Image.Image:
     # Draw the semi-transparent background
     draw.rectangle(
         [(0, image.height - background_height), (image.width, image.height)],
-        fill=(0, 0, 0, 255)
+        fill=(0, 0, 0, 255),
     )
 
     # Draw the text
@@ -69,7 +74,7 @@ def overlay_prompt(image: Image.Image, text: str) -> Image.Image:
         font=font,
         fill=(255, 255, 255),
         stroke_fill=(0, 0, 0),
-        stroke_width=1
+        stroke_width=1,
     )
 
     # Combine the overlay with the original image
