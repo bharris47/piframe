@@ -48,22 +48,20 @@ NOUNS = [
 ]
 
 STYLES = [
-    "Pixel Art",
-    "Comic Book",
-    "Pop Art",
-    "Art Deco",
-    "1950s Cartoon",
-    "Bauhaus",
-    "Low-Fi",
-    "Surrealist",
-    "Ukiyo-e",
+    "Line Art, clean lines, minimal shading."
+    "Ink Drawing, clean lines, minimal shading."
+    "Comic Book style, high contrast, strong use of negative space."
+    "Graphic Novel style, high contrast, strong use of negative space."
+    "Pixel Art, sharp and stylized, retro video game feel.",
+    "Stippling portrait, smooth inked outlines with gentle stipple-style shading.",
+    "Vector Art style, clean shapes and limited color palette, no gradients, bold colors, geometric.",
 ]
 
 IMAGE_DESCRIPTION_PROMPT = """You generate ridiculous image descriptions for a text-to-image generator.
 
 Requirements
 - Be extremely detailed about the setting and subject.
-- Descriptions must be nonsensical and hilarious.
+- Descriptions must be hilarious.
 - The day of the week cannot be directly represented visually, but abstract is fine.
 - Exclude quotes, exclamations, or other sayings as they will not be reflected in the image.
 - Nudity is strictly forbidden.
@@ -91,16 +89,6 @@ Image description:
 Limit titles to 10 words or fewer.
 Respond only with the title in plain text.
 """
-
-SIMPLE_PROMPT = """Give me 5 sentences in the form of <adjective> <noun> in <location> <action>. 
-- Make them funny and moderately ridiculous.
-- Nudity is strictly forbidden.
-- Do not mention real people.
-
-The sentences must match the vibe of the current conditions:
-{context}
-
-Respond only a JSON list containing the sentences."""
 
 
 @dataclass
@@ -153,10 +141,11 @@ def image_description_prompt(topic_strategy: TopicStrategy, context: PromptConte
         )
     context_str = "\n".join(contexts)
 
+    topic = topic_strategy.get_topic(context)
+
     if context.battery_level <= 0.2:
-        topic = "drained batteries"
+        topic = f"{topic} and drained batteries"
     else:
-        topic = topic_strategy.get_topic(context)
         if timestamp.hour >= 18:
             topic = f"{topic} at happy hour"
 
@@ -175,4 +164,4 @@ def image_generation_prompt(image_description: str):
     style = random.choice(STYLES)
     if not image_description.endswith("."):
         image_description += "."
-    return f"{image_description} High-contrast, sharp lines, minimal shading, vibrant colors, {style} style."
+    return f"{image_description} {style}."
