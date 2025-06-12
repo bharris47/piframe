@@ -51,7 +51,6 @@ STYLES = [
     "Line Art, bright colors, clean lines, minimal shading.",
     "Ink Drawing, bright colors, clean lines, minimal shading.",
     "Comic Book style, bold colors, high contrast, strong use of negative space.",
-    "Graphic Novel style, bold colors, high contrast, strong use of negative space.",
     "Pixel Art, colorful, sharp, stylized, retro video game feel.",
     "Stippling portrait, smooth, colorfully, inked outlines with gentle stipple-style shading.",
     "Vector Art style, hard-edged shapes and limited color palette, no gradients, no shading bold colors, geometric.",
