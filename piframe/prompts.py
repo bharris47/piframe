@@ -48,12 +48,12 @@ NOUNS = [
 ]
 
 STYLES = [
-    "Line Art, clean lines, minimal shading.",
-    "Ink Drawing, clean lines, minimal shading.",
+    "Line Art, bright colors, clean lines, minimal shading.",
+    "Ink Drawing, bright colors, clean lines, minimal shading.",
     "Comic Book style, high contrast, strong use of negative space.",
     "Graphic Novel style, high contrast, strong use of negative space.",
-    "Pixel Art, sharp and stylized, retro video game feel.",
-    "Stippling portrait, smooth inked outlines with gentle stipple-style shading.",
+    "Pixel Art, colorful, sharp, stylized, retro video game feel.",
+    "Stippling portrait, smooth, colorfully, inked outlines with gentle stipple-style shading.",
     "Vector Art style, clean shapes and limited color palette, no gradients, bold colors, geometric.",
 ]
 
@@ -164,4 +164,4 @@ def image_generation_prompt(image_description: str):
     style = random.choice(STYLES)
     if not image_description.endswith("."):
         image_description += "."
-    return f"{image_description} {style}."
+    return f"{image_description} {style}"
