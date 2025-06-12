@@ -48,10 +48,10 @@ NOUNS = [
 ]
 
 STYLES = [
-    "Line Art, clean lines, minimal shading."
-    "Ink Drawing, clean lines, minimal shading."
-    "Comic Book style, high contrast, strong use of negative space."
-    "Graphic Novel style, high contrast, strong use of negative space."
+    "Line Art, clean lines, minimal shading.",
+    "Ink Drawing, clean lines, minimal shading.",
+    "Comic Book style, high contrast, strong use of negative space.",
+    "Graphic Novel style, high contrast, strong use of negative space.",
     "Pixel Art, sharp and stylized, retro video game feel.",
     "Stippling portrait, smooth inked outlines with gentle stipple-style shading.",
     "Vector Art style, clean shapes and limited color palette, no gradients, bold colors, geometric.",
