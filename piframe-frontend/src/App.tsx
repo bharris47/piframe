@@ -440,7 +440,6 @@ function App() {
             "Gangster"
           ],
           min_length: 1,
-          max_length: 20
         },
         {
           type: "list",
@@ -468,7 +467,6 @@ function App() {
             "Fruits"
           ],
           min_length: 1,
-          max_length: 20
         }
       ]
     }
