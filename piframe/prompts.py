@@ -48,7 +48,7 @@ NOUNS = [
 ]
 
 STYLES = [
-    "Line Art, bright colors, clean lines, minimal shading.",
+    "Line Art, filled with flat, vibrant colors, clean lines, minimal shading.",
     "Ink Drawing, bright colors, clean lines, minimal shading.",
     "Comic Book style, bold colors, high contrast, strong use of negative space.",
     "Pixel Art, colorful, sharp, stylized, retro video game feel.",
